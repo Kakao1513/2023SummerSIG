@@ -19,7 +19,6 @@ function NewsList(props){
         <h4>{title}</h4>
         <p>test</p>
       </div>
-
   )
 }
 
