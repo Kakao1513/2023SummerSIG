@@ -1,77 +1,134 @@
 import './App.css';
+import Stack from '@mui/material/Stack'
+import Button from '@mui/material/Button'
+import Container from '@mui/material/Container';
+import Grid from '@mui/material/Grid'
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContentText from '@mui/material/DialogContentText';
+import { ToggleButton } from '@mui/material';
 import { useState, useEffect, useRef, Fragment } from 'react';
-import { useDataStore } from './store/dataList';
+import { useDataStore } from './store/store.js';
 
 function Header() {
   return (
-    <header>
-      <div className="black-nav">
-        <h4 style={{ color: 'white' }}>뉴스 요약기</h4>
+    <header className="App-header">
+      <div>
+        <h4>네이버 뉴스 요약기</h4>
       </div>
     </header>
   )
 }
-function MainForm() {
-  return (
-    <div className="main-form">
-      <Navigation></Navigation>
-      <div>
-        <ArticleContent></ArticleContent>
-        <ArticleContent></ArticleContent>
-        <ArticleContent></ArticleContent>
-        <ArticleContent></ArticleContent>
-        <ArticleContent></ArticleContent>
-        <ArticleContent></ArticleContent>
-      </div>
-    </div>
-  )
-}
+
 function Navigation() {
-  const categori = ["정치", "경제", "사회", "생활/문화", "IT/과학", "세계"];
-  const arr = [];
-  function navRepeater() {
-    for (let i = 0; i < categori.length; i++) {
-      arr.push(
-        <CategoriButton categori={categori[i]}></CategoriButton>
-      )
+  const [style, setStyle] = useState('outlined');
+
+  const GetClick = (e) => {
+    if (style === 'outlined') {
+      setStyle('contained');
+      setCurrentClick('selected');
     }
-    return arr;
+    else if (style === 'contained') {
+      setStyle('outlined')
+      setPrevClick('selected');
+    }
   }
+
+  useEffect(
+    (e) => {
+      if (currentClick !== null) {
+        setStyle('contained');
+      }
+
+      if (prevClick !== null) {
+        setStyle('outlined');
+      }
+      setPrevClick(currentClick);
+    }, [style]);
+
   return (
-    <div>
-      {navRepeater()}
-    </div>
+    <Stack spacing={1} direction="row" justifyContent={'center'}>
+      <Button variant={style} onClick={GetClick}>경제</Button>
+      <Button variant={style} onClick={GetClick}>정치</Button>
+      <Button variant={style} onClick={GetClick}>IT/기술</Button>
+      <Button variant={style} onClick={GetClick}>사회</Button>
+      <Button variant={style} onClick={GetClick}>세계</Button>
+      <Button variant={style} onClick={GetClick}>생활/문화</Button>
+    </Stack>
   )
 }
-function CategoriButton(props) {
-  const categori = props.categori;
+function Nav() {
   return (
-    <span className="main-nav">
-      <button>{categori}</button>
-    </span>
+    <nav className="nav-Container">
+      <Navigation className="nav-item"></Navigation>
+    </nav>
+  )
+}
+function Aside() {
+  return (
+    <aside className="container" id="aside">
+      <span className="rank">1</span>
+      <span className="topic">test</span>
+    </aside>
+  )
+}
+function Footer() { }
+
+function Main() {
+  return (
+    <main className="container" id="main">
+      <ArticleContent></ArticleContent>
+      <ArticleContent></ArticleContent>
+      <ArticleContent></ArticleContent>
+      <ArticleContent></ArticleContent>
+      <ArticleContent></ArticleContent>
+      <ArticleContent></ArticleContent>
+    </main>
   )
 }
 function ArticleContent(props) {
   let rank = props.rank;
+  const [open, setOpen] = useState(false);
   return (
-    <div className="topic-container">
-      <div className="topic-item">
-        <span><img src="firstsig/public/logo192.png"></img></span>
-        <span>
-          <div className="content">
-            <div className="title"><h3>title test</h3></div>
-            <div className="main-article"><article>Qui aimes-tu le mieux, homme enigmatique, dis?
-
-              ton pere, ta merem ta soeurs, ou ton frere?</article></div>
-            <div className="time"><p>time</p></div>
-          </div>
-        </span>
-
-      </div>
-    </div>
+    <Fragment>
+      <article className="article-container" onClick={() => { setOpen(true) }}>
+        <div className="article-item">
+          <span><img src="firstsig/public/logo192.png"></img></span>
+          <span>
+            <div className="content">
+              <div className="title"><h3>title test</h3></div>
+              <div className="Main-article">
+                <article>Qui aimes-tu le mieux, homme enigmatique, dis?ton pere, ta merem ta soeurs, ou ton frere?
+                </article>
+              </div>
+              <div className="time"><p>time</p></div>
+            </div>
+          </span>
+        </div>
+      </article>
+      <Modal open={open} setOpen={setOpen} />
+    </Fragment>
   )
 }
-
+function Modal(props) {
+  return (
+    <Dialog open={props.open}>
+      <Stack spacing={1} direction="row">
+        <DialogTitle>Create</DialogTitle>
+        <DialogContent>
+          <DialogActions>
+            <Button onClick={() => { props.setOpen(false) }}>X</Button>
+          </DialogActions>
+        </DialogContent>
+      </Stack>
+      <DialogContent>
+        <DialogContentText>11</DialogContentText>
+      </DialogContent>
+    </Dialog>
+  )
+}
 
 function NewsList(props) {
   const { newsTitle } = useDataStore();
@@ -85,22 +142,25 @@ function NewsList(props) {
 }
 
 function App() {
-  const { newsTitle } = useDataStore();
   return (
-    <div className="App">
-      <Header />
-      <MainForm></MainForm>
-    </div>
+    <Container fluid maxWidth="lg" className="App">
+      <Grid container spacing={2}>
+        <Grid item lg={12}>
+          <Header />
+        </Grid>
+        <Grid item lg={12}>
+          <Nav />
+        </Grid>
+        <Grid item lg={8}>
+          <Main />
+        </Grid>
+        <Grid item lg={4}>
+          <Aside />
+        </Grid>
+      </Grid>
+    </Container>
   );
 }
-function Modal() {
-  return (
-    <div className='modal'>
-      <h3>제목</h3>
-      <p className='date'>날짜</p>
-      <p>상세 내용</p>
-    </div>
-  )
-}
+
 
 export default App;
