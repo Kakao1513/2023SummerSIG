@@ -73,10 +73,12 @@ img {
 }
 
 .topic-title {}
-ul{
+
+ul {
   list-style: none;
   padding-left: 0px;
 }
+
 .topic-item {
   font-size: larger;
   text-align: center;
@@ -147,4 +149,30 @@ ul{
   margin-left: 2%;
   margin-right: 2%;
   margin-bottom: 2%;
+}
+
+#wrap {
+  min-height: 10vh;
+  position: relative;
+  width: 100%;
+  background-color: #f2f2f2;
+}
+
+footer {
+  width: 100%;
+  height: 90px;
+  bottom: 0px;
+  position: absolute;
+  border-top: 1px solid #c4c4c4;
+  padding-top: 15px;
+  color: #808080;
+  font-size: 11px;
+}
+footer p{
+  margin-top: 0;
+  margin-bottom: 0;
+}
+footer p div{
+  display: block;
+  margin-left: 20px;
 }

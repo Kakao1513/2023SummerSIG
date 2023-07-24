@@ -3,12 +3,15 @@ import { Stack, Button, Dialog, DialogTitle, DialogContent, DialogActions, Dialo
     from '@mui/material';
 import { useState, Fragment } from 'react';
 import { useDataStore } from '../store/store';
-function Main() {
+function Main(props) {
     const { contents } = useDataStore();
+    const categori = props.index;
+    const currentCategori = contents[categori];
     function ArticleContents() {
+        console.log(currentCategori.length);
         const arr = []
-        for (let i = 0; i < contents.length; i++) {
-            arr.push(<ArticleContent index={i}></ArticleContent>)
+        for (let i = 0; i < currentCategori.length; i++) {
+            arr.push(<ArticleContent categori={currentCategori} index={i}></ArticleContent>)
         }
         return arr;
     }
@@ -20,7 +23,7 @@ function Main() {
 }
 
 function ArticleContent(props) {
-    const { contents } = useDataStore();
+    const contents = props.categori;
     const [open, setOpen] = useState(false);
     let index = props.index;
     return (
@@ -39,17 +42,17 @@ function ArticleContent(props) {
                 </div>
                 <span className='image-wrapper'><img className='fitimag' src="img\test.jpg" /></span>
             </article>
-            <Modal open={open} setOpen={setOpen} index={index} />
+            <Modal open={open} setOpen={setOpen} index={index} categori={contents} />
         </Fragment>
     )
 }
 function Modal(props) {
-    const { contents } = useDataStore();
-
+    const contents = props.categori;
+    let index = props.index;
     return (
         <Dialog open={props.open}>
             <Stack className="modal-title" spacing={1} direction="row">
-                <DialogTitle><h2>{contents[props.index].title}</h2></DialogTitle>
+                <DialogTitle><h2>{contents[index].title}</h2></DialogTitle>
                 <DialogContent>
                     <DialogActions className="modal-button">
                         <Button variant="outlined" onClick={() => { props.setOpen(false) }}>Close</Button>
@@ -57,10 +60,10 @@ function Modal(props) {
                 </DialogContent>
             </Stack>
             <DialogContent className="modal-content">
-                <DialogContentText >{contents[props.index].article}</DialogContentText>
+                <DialogContentText >{contents[index].article}</DialogContentText>
             </DialogContent>
             <DialogContent className="modal-content">
-                <DialogContentText >{contents[props.index].time}</DialogContentText>
+                <DialogContentText >{contents[index].time}</DialogContentText>
             </DialogContent>
         </Dialog>
     )
