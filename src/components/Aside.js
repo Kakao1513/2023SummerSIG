@@ -1,7 +1,8 @@
 import React from 'react'
 import { useDataStore } from '../store/store';
-function Aside() {
+function Aside(props) {
     const { topics } = useDataStore();
+    const index = props.index; //외부에서 props로 json데이터를 받아옴
     const topiclist = () => {
         const arr = [];
         for (let topic of topics) {
