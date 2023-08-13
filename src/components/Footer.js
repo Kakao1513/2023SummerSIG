@@ -1,4 +1,6 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useDataStore } from './../store/store';
+import axios from 'axios';
 function Footer() {
     return (
         <div id="wrap">

@@ -1,70 +1,87 @@
-import React from 'react';
-import { Stack, Button, Dialog, DialogTitle, DialogContent, DialogActions, DialogContentText }
-    from '@mui/material';
-import { useState, Fragment } from 'react';
-import { useDataStore } from '../store/store';
+import CloseIcon from '@mui/icons-material/Close';
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, IconButton } from '@mui/material';
+import axios from 'axios';
+import React, { Fragment, useEffect, useState } from 'react';
+import LinesEllipsis from 'react-lines-ellipsis';
+import LinesEllipsisLoose from 'react-lines-ellipsis/lib/loose'
 function Main(props) {
-    const { contents } = useDataStore();
-    const categori = props.index;
-    const currentCategori = contents[categori];
+    const [contents, setContents] = useState([]);
+    async function getContents() {
+        await axios.get('https://jsonplaceholder.typicode.com/posts')
+            .then((response) => {
+                console.log(response.data);
+                setContents(response.data);
+            })
+            .catch((reject) => {
+                console.log(reject);
+            })
+    }
+    useEffect(() => {
+        getContents()
+    }, []);
+    console.log(contents);
     function ArticleContents() {
-        console.log(currentCategori.length);
         const arr = []
-        for (let i = 0; i < currentCategori.length; i++) {
-            arr.push(<ArticleContent categori={currentCategori} index={i}></ArticleContent>)
+        for (let i = 0; i < contents.length; i++) {
+            arr.push(<Grid item sx={{ ml: 1, pr: -1 }}><ArticleContent contents={contents} index={i}></ArticleContent></Grid>)
         }
         return arr;
     }
     return (
-        <main className="container" id="main">
+        <Grid container sx={{ pt: 2, pb: 2, pr: 1.5, pl: 1.5 }} className="container" id="main">
             {ArticleContents()}
-        </main>
+        </Grid>
     )
 }
 
 function ArticleContent(props) {
-    const contents = props.categori;
+    const contents = props.contents;
     const [open, setOpen] = useState(false);
     let index = props.index;
     return (
         <Fragment>
-            <article className="article-container" onClick={() => { setOpen(true) }}>
-                <div className="article-item">
-                    <span className='article-wrapper'>
-                        <div className="content">
-                            <div className="title"><h3>{contents[index].title}</h3></div>
-                            <div className="main-area">
-                                <p className="main-area ellipsis">{contents[index].article}</p>
-                            </div>
-                            <div className="time"><p>{contents[index].time}</p></div>
-                        </div>
-                    </span>
-                </div>
-                <span className='image-wrapper'><img className='fitimag' src="img\test.jpg" /></span>
-            </article>
-            <Modal open={open} setOpen={setOpen} index={index} categori={contents} />
-        </Fragment>
+            <Grid container spacing={1} className="article-container" onClick={() => { setOpen(true) }}>
+                <Grid item xs={9} className="article-item">
+                    <Grid container columns={3} className='article-wrapper'>
+                        <Grid item component='div' style={{ height: 'auto' }} xs={12} className="title"><h3>
+                            <LinesEllipsis text={contents[index].title} maxLine='1' ellipsis='...' basedOn='letters' /></h3></Grid>
+                        <Grid item component='div' xs={{ whiteSpace: 'nowrap', }}>
+                            <LinesEllipsis text={contents[index].body} maxLine='3' ellipsis='...' basedOn='letters' />
+                        </Grid>
+                        <Grid item xs={12} className="time"><p>{contents[index].id}</p></Grid>
+                    </Grid>
+                </Grid>
+                <Grid item xs={3} className='img-wrapper'><img className='fitimg' src="img\test.jpg" /></Grid>
+            </Grid>
+            <Modal open={open} setOpen={setOpen} index={index} contents={contents} />
+        </Fragment >
     )
 }
 function Modal(props) {
-    const contents = props.categori;
+    const contents = props.contents;
     let index = props.index;
     return (
         <Dialog open={props.open}>
-            <Stack className="modal-title" spacing={1} direction="row">
-                <DialogTitle><h2>{contents[index].title}</h2></DialogTitle>
-                <DialogContent>
-                    <DialogActions className="modal-button">
-                        <Button variant="outlined" onClick={() => { props.setOpen(false) }}>Close</Button>
-                    </DialogActions>
-                </DialogContent>
-            </Stack>
-            <DialogContent className="modal-content">
-                <DialogContentText >{contents[index].article}</DialogContentText>
-            </DialogContent>
-            <DialogContent className="modal-content">
-                <DialogContentText >{contents[index].time}</DialogContentText>
-            </DialogContent>
+            <Grid container spacing={1} sx={{ p: 1 }}>
+                <Grid item sm={10} lg={10} style={{ whiteSpace: 'normal', overflowWrap: 'break-word' }}>
+                    <DialogTitle><h3>{contents[index].title}</h3></DialogTitle>
+                </Grid>
+                <Grid sm={2} lg={2}>
+                    <DialogContent>
+                        <DialogActions>
+                            <IconButton size='small' color='primary' variant="text" onClick={() => { props.setOpen(false) }}><CloseIcon /> </IconButton>
+                        </DialogActions>
+                    </DialogContent>
+                </Grid>
+                <Grid sm={12} lg={12}>
+                    <DialogContent style={{ whiteSpace: 'normal', overflowWrap: 'break-word' }} className="modal-content">
+                        <DialogContentText >{contents[index].body}</DialogContentText>
+                    </DialogContent>
+                    <DialogContent className="modal-content">
+                        <DialogContentText >{contents[index].id}</DialogContentText>
+                    </DialogContent>
+                </Grid>
+            </Grid>
         </Dialog>
     )
 }

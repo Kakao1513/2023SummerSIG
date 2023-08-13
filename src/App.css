@@ -1,6 +1,4 @@
 .image-wrapper {
-  width: 300px;
-  height: auto;
   background-color: rgb(240, 240, 240);
   text-align: center;
   overflow: hidden;
@@ -40,7 +38,7 @@ img {
   width: 500px;
 }
 
-.ellipsis {
+.ellipsis, h2 {
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
@@ -72,7 +70,6 @@ img {
   text-align: center;
 }
 
-.topic-title {}
 
 ul {
   list-style: none;
@@ -123,7 +120,7 @@ ul {
 }
 
 .app-header {
-  background-color: #282c34;
+  background-color: #7ca2ef;
   min-height: 10vh;
   display: flex;
   text-align: center;
@@ -138,12 +135,6 @@ ul {
   margin: 2%;
 }
 
-.modal-button {
-  margin-top: 4%;
-  margin-left: 4%;
-  margin-right: 2%;
-
-}
 
 .modal-content {
   margin-left: 2%;
